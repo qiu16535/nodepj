@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem 12</title>
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>  
+
+    <div id="crudUser">
+        <label>UserName:</label><br>
+        <input type="text" v-model="user_name" ><br>
+        <!--<span class="error_message">{{errors.name}}</span><br>--> 
+        <label>Password:</label><br>
+        <input type="password" v-model="password"><br>
+        <!-- <span class="error_message">{{errors.password}}</span><br> -->
+        <label>PostCode:</label><br>
+        <input type="number" v-model="postcode">
+        <button v-on:click="search">Search Address</button>
+        <button v-on:click="search2">住所検索</button><br>
+        <label>都道府県:</label><br>
+        <input type="text" v-model=" address1"><br>
+        <label>市区町村:</label><br>
+        <input type="text" v-model=" address2"><br>
+        <label>町城:</label><br>
+        <input type="text" v-model=" address3"><br>
+
+        <!--error message-->
+        <p class="error_message">{{errors.name}}</p>
+        <p class="error_message">{{errors.password}}</p>
+        <p class="error_message">{{errors.postcode}}</p>
+        <!--button-->
+        <button v-on:click="createUser">Create User Info</button>
+        <button v-on:click="updateUser">Update User Info</button>
+        <button v-on:click="deleteUser">Delete User Info</button>
+        <button v-on:click="readUser">Read User Info</button>
+       
+    </div>
+    
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="  crossorigin="anonymous">
+    </script>    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- 本番バージョン、サイズと速度のために最適化されています -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="js/main.js"></script>
+    <!--住所検索API-->
+    <script src="https://yubinbango.github.io/yubinbango-core/yubinbango-core.js" charset="UTF-8"></script>
+</body>
+</html>
