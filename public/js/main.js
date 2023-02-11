@@ -176,9 +176,8 @@ let appCrud = new Vue({
         },
         readUser: function () {
             console.log("Read the user.");
-            
-            
-            let url = new URL("http://127.0.0.1:3000/read");
+
+            let url = new URL("http://127.0.0.1:3000/read/" + this.user_name);
             fetch(url).then(response => {
                 // (1) 通信が成功したか確認する	
                 if (!response.ok) {
@@ -188,23 +187,30 @@ let appCrud = new Vue({
                 // (3) レスポンスデータからJSONデータを取得		
                 return response.json();	
             }).then(data => {		
-                // (4) 受け取ったデータをコンソール出力
-                let flag = false; //データがない状態
-                
-                Object.keys(data).forEach((key) => {
-                    if (key === this.user_name) {
-                        alert(JSON.stringify(data[key], null, 2));
-                        flag = true;//データがある
-                    }//else if(key === null){
-                    // //邱追加：空白データを表示させないように   
-                    //     alert("該当ユーザーは存在しません");
-                    // }
-                  });
-                // console.log(JSON.stringify(data));
-                // alert(JSON.stringify(data, null, 2));
-                    if(flag === false){
-                        alert("該当ユーザーは存在しません");
-                };
+                // (4) 受け取ったデータをコンソール出力		
+                console.log(JSON.stringify(data));
+                alert(JSON.stringify(data));
+            }).catch(error => {		
+                // (5) エラーを受け取ったらコンソール出力		
+                console.error(error);
+            });
+        },
+        readUserAll: function () {
+            console.log("Read the user.");
+
+            let url = new URL("http://127.0.0.1:3000/readAll");
+            fetch(url).then(response => {
+                // (1) 通信が成功したか確認する	
+                if (!response.ok) {
+                    // (2) 通信に失敗したときはエラーを発生させる
+                    throw new Error('Not ok');
+                }		
+                // (3) レスポンスデータからJSONデータを取得		
+                return response.json();	
+            }).then(data => {		
+                // (4) 受け取ったデータをコンソール出力		
+                console.log(JSON.stringify(data));
+                alert(JSON.stringify(data));
             }).catch(error => {		
                 // (5) エラーを受け取ったらコンソール出力		
                 console.error(error);

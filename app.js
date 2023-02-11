@@ -32,7 +32,7 @@ const connection = mysql.createConnection({
 //     console.log('error connecting: ' + err.stack);
 //     return;
 //   }
-//   connection.query('CREATE TABLE IF NOT EXISTS test.info2(UserName VARCHAR(10) NOT NULL, Password INT NOT NULL, PostCode INT, Address VARCHAR(30))', 
+//   connection.query('CREATE TABLE IF NOT EXISTS test.info2(UserName VARCHAR(20) NOT NULL, Password VARCHAR(20) NOT NULL, PostCode INT, Address VARCHAR(30))', 
 //   (err, result) =>  {
 //       if (err) throw err;
 //       console.log('テーブルが作成されました');
@@ -53,12 +53,13 @@ app.get("/home", (req,res) => {
 });
 
 // Create
-app.post("/create",(req, res, next) =>{
+app.post("/create",
+(req, res, next) =>{
   console.log("ユーザ重複チェック");
   const username = req.body.UserName;
+  const usercheck = 'SELECT * FROM info2 WHERE UserName = ?';
   connection.query(
-    'SELECT * FROM info2 WHERE UserName = ?',
-    [username],
+    usercheck, [username],
     (error, results) => {
       if(results.length > 0){
         console.log("該当ユーザーが既に存在しているため、登録できません");
@@ -66,8 +67,8 @@ app.post("/create",(req, res, next) =>{
       }else{
         next();
       }
-    }
-  );}, 
+    });
+  }, 
   (req, res) => {
   const rst = req.body;
   const insertSql =  'INSERT INTO info2 SET ?';
@@ -92,35 +93,70 @@ app.post("/create",(req, res, next) =>{
   // }else{
   //   res.json("ユーザーが既に存在しています");
   // }
-
-  
-  // const selectSql  =  'SELECT * FROM info2 WHERE UserName =' + username;
-
-//   const check = connection.query(selectSql, username, (err, result) => {
-//     if (err) throw err;
-// });
-
-
-
 });
 
-// Read
-app.get("/read", (req,res) => {
+// Read one
+app.get("/read/:userName", 
+(req, res, next) => {
+  console.log("ユーザー有無チェック");
+  const userName = req.params.userName;
+  const usercheck = 'SELECT * FROM info2 WHERE UserName = ?';
+  connection.query(
+    usercheck, [userName],
+    (error, results) => {
+      if(results.length === 0){
+        res.json("該当ユーザーが存在しません");
+      }else{
+        next();
+      }
+    }
+  );},
+(req,res) => {
   // let userInfos = userVm.ReadUserInfo();
   // res.json(userInfos);
-const selectSql = 'SELECT * FROM info2' ;
-connection.query(
-  selectSql, (err, result) => {  
-  if (err) throw err;
+const userName = req.params.userName;
+const selectSql = 'SELECT * FROM info2 WHERE UserName = ?';
 
-      console.log(result);
-      res.send(result);
+connection.query(
+  selectSql, [userName], (err, results) => {  
+  if (err) throw err;
+      console.log(results);
+      res.send(results);
   });
 
 });
 
+// Read all
+app.get("/readAll", (req,res) => {
+  // let userInfos = userVm.ReadUserInfo();
+  // res.json(userInfos);
+const selectSql = 'SELECT * FROM info2 ' ;
+
+connection.query(
+  selectSql, (err, results) => {  
+  if (err) throw err;
+      console.log(results);
+      res.send(results);
+  });
+});
+
 // Update
-app.put("/update/:userName", (req,res) => {
+app.put("/update/:userName", 
+(req, res, next) => {
+  console.log("ユーザー有無チェック");
+  const userName = req.params.userName;
+  const usercheck = 'SELECT * FROM info2 WHERE UserName = ?';
+  connection.query(
+    usercheck, [userName],
+    (error, results) => {
+      if(results.length === 0){
+        res.json("該当ユーザーが存在しません");
+      }else{
+        next();
+      }
+    }
+  );},
+(req, res) => {
   const userName = req.params.userName;
   const rst = req.body;
   connection.query(
@@ -130,9 +166,7 @@ app.put("/update/:userName", (req,res) => {
       if (error) {
         console.log(error);
       }
-      res.json(
-        "Update Success!"
-      );
+      res.json("Update Success!");
     }
   );
 
@@ -152,16 +186,22 @@ app.put("/update/:userName", (req,res) => {
 });
 
 // Delete
-app.delete("/delete/:userName", (req,res) => {
-  // let userName = req.params.userName;
-  // let rst = userVm.DeleteUserInfo(userName);
-  
-  // if(rst === true){
-  //   res.json("Delete Success!");
-  //   console.log(rst);
-  // }else{
-  //   res.json("ユーザーが存在していません"); 
-  // }
+app.delete("/delete/:userName",
+(req, res, next) => {
+  console.log("ユーザー有無チェック");
+  const userName = req.params.userName;
+  const usercheck = 'SELECT * FROM info2 WHERE UserName = ?';
+  connection.query(
+    usercheck, [userName],
+    (error, results) => {
+      if(results.length === 0){
+        res.json("該当ユーザーが存在しません");
+      }else{
+        next();
+      }
+    }
+  );},
+  (req, res) => {
     const userName = req.params.userName;
     const deleteSql = 'DELETE FROM info2 WHERE userName = ?';
     connection.query(deleteSql, userName, (err, result) => {
@@ -170,7 +210,15 @@ app.delete("/delete/:userName", (req,res) => {
         "Delete Success!"
       );
   });
+   // let userName = req.params.userName;
+  // let rst = userVm.DeleteUserInfo(userName);
   
+  // if(rst === true){
+  //   res.json("Delete Success!");
+  //   console.log(rst);
+  // }else{
+  //   res.json("ユーザーが存在していません"); 
+  // }
 });
 
 console.log("Start the node server......");
