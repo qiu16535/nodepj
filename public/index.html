@@ -12,27 +12,28 @@
 <body>  
 
     <div id="crudUser">
-        <label>UserName:</label><br>
-        <input type="text" v-model="user_name" ><br>
-        <!--<span class="error_message">{{errors.name}}</span><br>--> 
-        <label>Password:</label><br>
-        <input type="password" v-model="password"><br>
-        <!-- <span class="error_message">{{errors.password}}</span><br> -->
-        <label>PostCode:</label><br>
+        <label>UserName:<span class="error_message">※</span>英数(4-10)</label><br>
+        <input type="text" v-model="user_name">
+        <span class="error_message">{{errors.name}}</span><br> 
+        <label>Password:<span class="error_message">※</span>英数(8-12)</label><br>
+        <input type="password" v-model="password">
+        <span class="error_message">{{errors.password}}</span><br>
+        <label>PostCode:<span class="error_message">※</span>必須</label><br>
         <input type="number" v-model="postcode">
-        <button v-on:click="search">Search Address</button>
-        <button v-on:click="search2">住所検索</button><br>
+        <!-- <button v-on:click="search">Search Address</button> -->
+        <button v-on:click="search2">住所検索</button>
+        <span class="error_message">{{errors.postcode}}</span> <br>
         <label>都道府県:</label><br>
         <input type="text" v-model=" address1"><br>
         <label>市区町村:</label><br>
         <input type="text" v-model=" address2"><br>
         <label>町城:</label><br>
-        <input type="text" v-model=" address3"><br>
+        <input type="text" v-model=" address3"><br><br>
 
         <!--error message-->
-        <p class="error_message">{{errors.name}}</p>
+        <!-- <p class="error_message">{{errors.name}}</p>
         <p class="error_message">{{errors.password}}</p>
-        <p class="error_message">{{errors.postcode}}</p>
+        <p class="error_message">{{errors.postcode}}</p> -->
         <!--button-->
         <button v-on:click="createUser">Create User Info</button>
         <button v-on:click="updateUser">Update User Info</button>

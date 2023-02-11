@@ -27,77 +27,58 @@ let appCrud = new Vue({
       message: "CRUD User!",
       errors: {},
     },
+    watch:{
+    
+      },
       methods: {
-        createUser: function () {
-            //=======入力チェック(邱)==========
-            //===username===
-            //username:1-10制御
-            const name = this.user_name.length;
-            const password = this.password.length;
-            const postcode = this.postcode.length;
-
-            const name_value = this.user_name;
-            const password_value = this.password;
-            const postcode_value = this.postcode;
-
+        //=============入力チェック================
+        checkName:function(input){
             var pattern = new RegExp(/^[0-9a-zA-Z]+$/);
+            var nameLength = input.length < 4 || input.length > 10;
 
-            if(name < 1 || name > 10){
-                this.$set(this.errors, "name", "1以上10以内の文字を入力してください");
+            if(nameLength){
+                this.$set(this.errors, "name", "4以上10以内の文字を入力してください");
                 return false;
-            }else{
-                this.$delete(this.errors, "name");
-                // console.log("Create the user.");
-            }
-
-            //username:英数制御
-            // console.log(pattern.test(name_value));
-            if(pattern.test(name_value)){
-                this.$delete(this.errors, "name");
-                // console.log("Create the user.");
-            }else{
+            }else if(!pattern.test(input)){
                 this.$set(this.errors, "name", "英数のみ");
                 return false;
+            }else{
+                this.$delete(this.errors, "name");
+                return true;
             }
-
-            //===password===
-            //password:文字数制御
-            if(password < 8 || password > 12){
+        },
+        checkPassword:function(input){
+            var pattern = new RegExp(/^[0-9a-zA-Z]+$/);
+            var passwordLength = input.length < 8 || input.length > 12
+            if(passwordLength){
                 this.$set(this.errors, "password", "passwordは8-12の英数を入力してください");
                 return false;
-            }else{
-                this.$delete(this.errors, "password");
-                // console.log("Create the user.");
-            }
-             //password:英数制御
-             if(pattern.test(password_value)){
-                this.$delete(this.errors, "password");
-                // console.log("Create the user.");
-            }else{
+            }else if(!pattern.test(input)){
                 this.$set(this.errors, "password", "英数のみ");
-                return false;
+            }else{
+                this.$delete(this.errors, "password");
+                return true;
             }
-
-            //===postcode===
-            //7文字
-            //半角数字のみ（半角ハイフン入り）
-            //空白はだめ
-            
-            if(postcode === 0){
+        },
+        checkPostcode:function(input){
+            var postcodeLength = input.length === 0
+            if(postcodeLength){
                 this.$set(this.errors, "postcode", "郵便番号を入力してください");
                 return false;
             }else{
                 this.$delete(this.errors, "postcode");
-                // console.log("Create the user.");
+                return true;
             }
-            //その他：該当する郵便番号が見つからないときはエラーを表示
-            
-
-            //===address===
-             //address:空白制御
-             
-
-
+        },
+        //============= CRUD ================
+        createUser: function() {
+            //入力チェック
+            this.checkName(this.user_name);
+            this.checkPassword(this.password);
+            this.checkPostcode(this.postcode);
+            if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+                return false;
+            }
 
             // POSTメソッドで送信するデータ
             let userInfo = { UserName: this.user_name, Password: this.password, 
@@ -123,29 +104,22 @@ let appCrud = new Vue({
                 }
                 return response.json();
             }).then(data => {
-                if(this.user_name === null){
-                    alert("該当ユーザーは存在しません");
-                }else{
                     console.log(JSON.stringify(data));
                     alert(JSON.stringify(data));
-                }
-                
             }).catch(error => {		
                 // (5) エラーを受け取ったらコンソール出力		
                 console.error(error);
             });
         },
         updateUser: function () {
-            //邱　入力チェック：空白制御
-            const name = this.user_name.length;
-            if(name === 0){
-                this.$set(this.errors, "name", "usernameは入力されていません");
-                return false;
-            }else{
-                this.$delete(this.errors, "name");
-                console.log("Update the user.");
-            }
-        
+             //入力チェック
+             this.checkName(this.user_name);
+             this.checkPassword(this.password);
+             this.checkPostcode(this.postcode);
+             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+                 return false;
+             }
+
             let userInfo = { UserName: this.user_name, Password: this.password, 
                     PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
 
@@ -175,7 +149,13 @@ let appCrud = new Vue({
             });
         },
         readUser: function () {
-            console.log("Read the user.");
+             //入力チェック
+             this.checkName(this.user_name);
+             this.checkPassword(this.password);
+             this.checkPostcode(this.postcode);
+             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+                 return false;
+             }
 
             let url = new URL("http://127.0.0.1:3000/read/" + this.user_name);
             fetch(url).then(response => {
@@ -217,14 +197,12 @@ let appCrud = new Vue({
             });
         },
         deleteUser: function () {
-            //邱　入力チェック：空白制御
-            const name = this.user_name.length;
-            if(name === 0){
-                this.$set(this.errors, "name", "usernameは入力されていません");
+            //入力チェック
+            this.checkName(this.user_name);
+            this.checkPassword(this.password);
+            this.checkPostcode(this.postcode);
+            if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
                 return false;
-            }else{
-                this.$delete(this.errors, "name");
-                console.log("Delete the user.");
             }
      
             let url = new URL("http://127.0.0.1:3000/delete/" + this.user_name);
