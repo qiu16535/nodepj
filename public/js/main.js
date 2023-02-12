@@ -70,16 +70,20 @@ let appCrud = new Vue({
                 return true;
             }
         },
-        //============= CRUD ================
-        createUser: function() {
-            //入力チェック
+        checkAll:function(){
             this.checkName(this.user_name);
             this.checkPassword(this.password);
             this.checkPostcode(this.postcode);
             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
                 return false;
             }
-
+        },
+        //============= CRUD ================
+        createUser: function() {
+            //入力チェック
+            if (!this.checkAll()){
+                return false;
+            }
             // POSTメソッドで送信するデータ
             let userInfo = { UserName: this.user_name, Password: this.password, 
                 PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
@@ -113,12 +117,9 @@ let appCrud = new Vue({
         },
         updateUser: function () {
              //入力チェック
-             this.checkName(this.user_name);
-             this.checkPassword(this.password);
-             this.checkPostcode(this.postcode);
-             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
-                 return false;
-             }
+             if (!this.checkAll()){
+                return false;
+            }
 
             let userInfo = { UserName: this.user_name, Password: this.password, 
                     PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
@@ -150,12 +151,9 @@ let appCrud = new Vue({
         },
         readUser: function () {
              //入力チェック
-             this.checkName(this.user_name);
-             this.checkPassword(this.password);
-             this.checkPostcode(this.postcode);
-             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
-                 return false;
-             }
+             if (!this.checkAll()){
+                return false;
+            }
 
             let url = new URL("http://127.0.0.1:3000/read/" + this.user_name);
             fetch(url).then(response => {
@@ -198,10 +196,7 @@ let appCrud = new Vue({
         },
         deleteUser: function () {
             //入力チェック
-            this.checkName(this.user_name);
-            this.checkPassword(this.password);
-            this.checkPostcode(this.postcode);
-            if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+            if (!this.checkAll()){
                 return false;
             }
      
