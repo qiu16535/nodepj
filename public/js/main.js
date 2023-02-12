@@ -35,8 +35,12 @@ let appCrud = new Vue({
         checkName:function(input){
             var pattern = new RegExp(/^[0-9a-zA-Z]+$/);
             var nameLength = input.length < 4 || input.length > 10;
+            var nameZero = input.length < 1;
 
-            if(nameLength){
+            if(nameZero){
+                this.$set(this.errors, "name", "文字を入力してください");
+                return false;
+            }else if(nameLength){
                 this.$set(this.errors, "name", "4以上10以内の文字を入力してください");
                 return false;
             }else if(!pattern.test(input)){
@@ -70,20 +74,29 @@ let appCrud = new Vue({
                 return true;
             }
         },
-        checkAll:function(){
-            this.checkName(this.user_name);
-            this.checkPassword(this.password);
-            this.checkPostcode(this.postcode);
-            if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
-                return false;
-            }
+        //邱：まとめは無理だ
+        // checkAll:function(){
+        //     this.checkName(this.user_name);
+        //     this.checkPassword(this.password);
+        //     this.checkPostcode(this.postcode);
+        //     if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+        //         return false;
+        //     }
+        // },
+        msgClear:function(){
+            this.$delete(this.errors, "password");
+            this.$delete(this.errors, "postcode");
+            this.$delete(this.errors, "name");
         },
         //============= CRUD ================
         createUser: function() {
             //入力チェック
-            if (!this.checkAll()){
-                return false;
-            }
+            this.checkName(this.user_name);
+            this.checkPassword(this.password);
+            this.checkPostcode(this.postcode);
+            if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+               return false;
+            };
             // POSTメソッドで送信するデータ
             let userInfo = { UserName: this.user_name, Password: this.password, 
                 PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
@@ -117,9 +130,12 @@ let appCrud = new Vue({
         },
         updateUser: function () {
              //入力チェック
-             if (!this.checkAll()){
+             this.checkName(this.user_name);
+             this.checkPassword(this.password);
+             this.checkPostcode(this.postcode);
+             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
                 return false;
-            }
+             };
 
             let userInfo = { UserName: this.user_name, Password: this.password, 
                     PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
@@ -151,7 +167,9 @@ let appCrud = new Vue({
         },
         readUser: function () {
              //入力チェック
-             if (!this.checkAll()){
+            this.msgClear();
+            this.checkName(this.user_name);
+            if(!this.checkName(this.user_name)){
                 return false;
             }
 
@@ -196,7 +214,9 @@ let appCrud = new Vue({
         },
         deleteUser: function () {
             //入力チェック
-            if (!this.checkAll()){
+            this.msgClear();
+            this.checkName(this.user_name);
+            if(!this.checkName(this.user_name)){
                 return false;
             }
      
