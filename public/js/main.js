@@ -52,20 +52,22 @@ let appCrud = new Vue({
             }
         },
         checkPassword:function(input){
-            var pattern = new RegExp(/^[0-9a-zA-Z]+$/);
-            var passwordLength = input.length < 8 || input.length > 12
+            // var pattern = new RegExp(/^[0-9a-zA-Z]+$/);
+            var pattern = new RegExp(/^(?=.*[A-Z])(?=.*[a-z])[0-9a-zA-Z]+$/);
+            var passwordLength = input.length < 8 || input.length > 12;
+
             if(passwordLength){
                 this.$set(this.errors, "password", "passwordは8-12の英数を入力してください");
                 return false;
             }else if(!pattern.test(input)){
-                this.$set(this.errors, "password", "英数のみ");
+                this.$set(this.errors, "password", "小文字と大文字は１以上が必須");
             }else{
                 this.$delete(this.errors, "password");
                 return true;
             }
         },
         checkPostcode:function(input){
-            var postcodeLength = input.length === 0
+            var postcodeLength = input.length === 0;
             if(postcodeLength){
                 this.$set(this.errors, "postcode", "郵便番号を入力してください");
                 return false;
@@ -74,15 +76,14 @@ let appCrud = new Vue({
                 return true;
             }
         },
-        //邱：まとめは無理だ
-        // checkAll:function(){
-        //     this.checkName(this.user_name);
-        //     this.checkPassword(this.password);
-        //     this.checkPostcode(this.postcode);
-        //     if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
-        //         return false;
-        //     }
-        // },
+        checkAll:function(input1, input2, input3){
+            this.checkName(input1);
+            this.checkPassword(input2);
+            this.checkPostcode(input3);
+            if(!this.checkName(input1) || !this.checkPassword(input2) || !this.checkPostcode(input3)){
+                return false;
+            }
+        },
         msgClear:function(){
             this.$delete(this.errors, "password");
             this.$delete(this.errors, "postcode");
@@ -91,12 +92,18 @@ let appCrud = new Vue({
         //============= CRUD ================
         createUser: function() {
             //入力チェック
-            this.checkName(this.user_name);
-            this.checkPassword(this.password);
-            this.checkPostcode(this.postcode);
-            if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
-               return false;
-            };
+            this.checkAll(this.user_name, this.password, this.postcode);
+            if(this.checkAll(this.user_name, this.password, this.postcode) === false){
+                return false;
+            }
+            // this.checkName(this.user_name);
+            // this.checkPassword(this.password);
+            // this.checkPostcode(this.postcode);
+            // if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
+            //    return false;
+            // };
+
+
             // POSTメソッドで送信するデータ
             let userInfo = { UserName: this.user_name, Password: this.password, 
                 PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
@@ -130,12 +137,10 @@ let appCrud = new Vue({
         },
         updateUser: function () {
              //入力チェック
-             this.checkName(this.user_name);
-             this.checkPassword(this.password);
-             this.checkPostcode(this.postcode);
-             if(!this.checkName(this.user_name) || !this.checkPassword(this.password) || !this.checkPostcode){
-                return false;
-             };
+             this.checkAll(this.user_name, this.password, this.postcode);
+             if(this.checkAll(this.user_name, this.password, this.postcode) === false){
+                 return false;
+             }
 
             let userInfo = { UserName: this.user_name, Password: this.password, 
                     PostCode: this.postcode, Address: [this.address1, this.address2, this.address3] };
@@ -264,7 +269,7 @@ let appCrud = new Vue({
             }
         },
         search2: function () {
-            let _this = this
+            let _this = this;
             new YubinBango.Core(this.postcode, function(addr) {
                 if(addr.region === ""){
                     alert("not fund");
